@@ -20,7 +20,7 @@ my $dbh = DBI->connect('dbi:Oracle:host=localhost;sid=billing;port=1521', 'test'
          $self->hook( before_dispatch => sub {
               my $self = shift;
               # notice: url must be fully-qualified or absolute, ending in '/' matters.
-              $self->req->url->base(Mojo::URL->new(q{http://ltetest.saima.kg/}));
+              $self->req->url->base(Mojo::URL->new(q{http://localhost}));
          });
     }
 
