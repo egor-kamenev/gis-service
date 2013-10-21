@@ -1,0 +1,37 @@
+<!doctype html><html>
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  
+  <link type="text/css" href="../css/main.css" rel="stylesheet" />
+  <link type="text/css" href="../css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />          
+  <script type="text/javascript" src="../js/jquery-1.6.4.min.js"></script>  
+  <script type="text/javascript" src="../js/jquery-ui-1.8.16.custom.min.js"></script>
+  <script type="text/javascript" src="../js/admin.js"></script>
+  
+  <title>Панель администрирования</title> 
+  </head>  
+  <body>
+  <div id='dialog' class='hidden'>
+   <table id='admin_table'>
+    <tr>
+      <th>ID</th>
+      <th>ФИО</th>      
+      <th>Логин</th>
+      <th>Пароль</th>
+      <th>Удалить</th>      
+    </tr>
+    
+   % for my $row (@$sth){
+    <tr>
+      <td><%= $row->[0] %></td>
+      <td><%= $row->[1] %></td>
+      <td><%= $row->[2] %></td>     
+      <td><a href=/admin/change_user_data_page?id=<%= $row->[0] %>>Изменить</a></td>
+      <td><a href=/admin/remove_user?id=<%= $row->[0] %>>Удалить</a></td>     
+    </tr>   
+   %}  
+   </table>  
+  </div>
+</html> 
+ 

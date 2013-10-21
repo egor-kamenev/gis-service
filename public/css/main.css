@@ -1,0 +1,185 @@
+html, body, #map_canvas {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: white;
+    overflow: hidden;
+    font-family: 'MS Serif', 'New York', serif;
+}
+
+.contextMenu LI {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+.contextMenu A {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    line-height: 20px;
+    height: 20px;
+    background-position: 6px center;
+    background-repeat: no-repeat;
+    outline: none;
+    padding: 1px 5px;
+    padding-left: 28px;
+}
+
+.contextMenu a:hover {
+    color: #FFF;
+    background-color: #3399FF;
+    cursor:pointer;
+}
+
+.disabled, .hidden {
+    display: none;
+}
+
+.contextMenu {
+    position: absolute;
+    width: 240px;
+    z-index: 99999;
+    border: solid 1px #CCC;
+    background: #EEE;
+    padding: 0px;
+    margin: 0px;
+    display: none;
+}
+
+input,select,textarea{
+    width: 97%;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: silver;
+}
+
+select{
+    text-align: right;
+}
+
+fieldset{
+    border: 1px solid silver;
+    border-radius: 10px;
+    margin:10px;
+}
+
+/* чекбоксы в одну строку */
+.inline{
+    margin: 10px;
+    width: 100%;
+}
+
+.inline label{
+    float: left;
+    width: 120px;
+    text-align: right;
+}
+.inline input{
+    width: auto;
+    vertical-align: text-bottom;
+}
+
+
+/* верхнее меню */
+
+#menu{
+    position: relative;
+    width: 100%;
+    height: 21px;
+    background: #ffffff; /* Old browsers */
+    /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlNWU1ZTUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+    background: -moz-linear-gradient(top,  #ffffff 0%, #e5e5e5 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#e5e5e5)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffffff 0%,#e5e5e5 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffffff 0%,#e5e5e5 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffffff 0%,#e5e5e5 100%); /* IE10+ */
+    background: linear-gradient(top,  #ffffff 0%,#e5e5e5 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-8 */
+
+}
+
+#menu #menu_block{
+    position: absolute;
+    right: 10px;
+}
+
+#menu #menu_block form{
+    display: block;
+    float: left;
+}
+
+#menu_block input{
+    width: auto;
+    vertical-align: text-bottom;
+}
+
+/* меню фильтр */
+
+#filter .inline{
+    margin: 5px;
+}
+
+#filter .inline label{
+    width:100px;
+}
+
+#filter #setup_date .inline  input{
+    width: 92px;
+    margin-left: 3px;
+}
+
+.filters_menu, #reset_button{
+    cursor: pointer;
+    text-decoration:underline;
+    color:#0b0080;
+    font-size: 12pt;
+}
+
+#reset_button{
+    display: block;
+    text-align: right;
+    margin-bottom: -10px;
+    margin-right: 20px;
+}
+
+/* Диалог */
+#dialog textarea{
+    resize: none;
+    height: 255px;
+    border-radius: 10px;
+    border-color: silver;
+}
+
+/* Preloader*/
+
+#preloader{
+    overflow: hidden;
+    position: absolute;
+    float: left;
+    width: 100%;
+    height: 100%;
+    background: #666 url(../img/preloader.png) 50% 50% repeat;
+    z-index: 1002;
+    opacity: 0.6;
+}
+
+#inside{
+    position: relative;
+    left: 50%;
+    top: 50%;
+    float: left;
+    opacity: 1;
+}
+
+#inside img{
+    position: relative;
+    right: 50%;
+    z-index: 1;
+    opacity: 1;
+}
+
+
+
+

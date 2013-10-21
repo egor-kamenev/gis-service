@@ -1,0 +1,548 @@
+   <!DOCTYPE html>
+  <html>
+    <head>
+      <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+      <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />      
+	  
+	  <script type="text/javascript" src="./js/LAB.min.js?1339387579"></script>
+	  <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=geometry&sensor=false"></script>
+	  
+	  <script type="text/javascript">
+	  
+		/*
+			
+
+		*/
+	  
+	  
+		$LAB
+		.script(
+			
+			"./js/jquery-1.6.4.min.js?1339387579",
+			"./js/jquery_serializer_plugin.js?1339387579",
+			"./js/jquery-ui-1.8.16.custom.min.js?1339387579",
+			"./js/jquery.alerts.js?1339387579",
+			"./js/jquery.cookie.js?1339387579",
+			"./js/jcookies.js?1339387579",
+			"./js/form-validator/js/jquery.validationEngine.js?1339387579",			
+			"./js/form-validator/js/languages/jquery.validationEngine-ru.js?1339387579",			
+			"./js/underscore.js?1339387579",
+			"./js/backbone.js?1339387579"
+		)
+
+		.script(
+
+			"./js/bb_app.js?1339387579",
+			"./js/bb_config.js?1339387579",
+			"./js/views/preloader.js?1339387579"
+
+		).wait(function(){
+			//выводим прелоудер
+			$(document).ready(function() {
+				App.Views.preloader = new App.Views.Preloader;						
+			});
+				
+		})
+
+		.script(
+
+			"./js/models/label.js?1339387579",
+			"./js/models/marker.js?1339387579",
+			"./js/models/basestation.js?1339387579",
+			"./js/models/sector.js?1339387579",
+			"./js/models/menu_element.js?1339387579",
+			"./js/models/control_menu_element.js?1339387579",
+			"./js/models/nearest_bs.js?1339387579"
+
+		) //модели
+
+		.script(
+
+			"./js/collections/base_collection.js?1339387579",
+			"./js/collections/markers.js?1339387579",
+			"./js/collections/base_stations.js?1339387579",
+			"./js/collections/sectors.js?1339387579",
+			"./js/collections/menu_elements.js?1339387579",
+			"./js/collections/control_menu_elements.js?1339387579"
+
+		)
+
+		.script(
+
+			"./js/views/map.js?1339387581",
+			"./js/views/drop_down_menu.js?1339387579",
+			"./js/views/control_menu.js?1339387579"
+		)
+
+		.script(
+
+			"./js/views/dialogs/base_window.js?1339387579",
+			"./js/views/dialogs/add_new_marker.js?1339387579",
+			"./js/views/dialogs/add_new_basestation.js?1339387579",
+			"./js/views/dialogs/add_new_sector.js?1339387579"
+
+		)
+
+		.script(
+
+			"./js/views/infowindow.js?1339387579",
+			"./js/views/labels/label.js?1339387579",
+			"./js/views/labels/labels.js?1339387579",
+			"./js/views/labels/marker.js?1339387579",
+			"./js/views/labels/basestation.js?1339387579",
+			"./js/views/labels/sector.js?1339387579",
+			"./js/views/labels/sectors.js?1339387579",
+			"./js/views/canvas.js?1339387579",
+			"./js/views/ruler.js?1339387579",
+			"./js/views/bs_direction.js?1339387580",
+			"./js/views/menu_filter.js?1339387579",
+			"./js/views/main_menu.js?1339387579",			
+			"./js/bb_setup.js?1339387579"
+
+		);
+		 
+	  </script>
+	  	  			
+      <link type="text/css" href="/css/ui-lightness/jquery-ui-1.8.16.custom.css?1339387579" rel="stylesheet" />
+      <link type="text/css" href="./js/form-validator/css/validationEngine.jquery.css?1339387579" rel="stylesheet" />
+      <link type="text/css" href="css/jquery.alerts.css?1339387579" rel="stylesheet" />
+      <link type="text/css" href="css/main.css?1339387579" rel="stylesheet" />
+      
+     </head>
+     <body oncontextmenu="return false;">
+		 <div id="preloader" class="hidden">
+			 <div id="inside">
+				<img src="./img/ajax-loader-2.gif">
+			 </div>
+		 </div>
+		 <div id="menu">     
+      <span id="menu_block">            
+      <% if($right_type_id eq 2 || $right_type_id eq 3 || $right_type_id eq 4){ %>               
+        <form name="user_markers_form">
+          <label for='show_only_own_markers'>Показывать только свои маркеры:&nbsp;</label>
+          <input type='checkbox' name='show_only_own_markers'>        
+        </form>&nbsp;|&nbsp;
+      <% } %>      
+					     
+      <% if($right_type_id eq 1){ %>
+       <span class="filters_menu" id="filter_menu_button">Фильтры</span>&nbsp;|&nbsp;
+       <a class="filters_menu" href="/admin/login">Админ-панель</a>&nbsp;|&nbsp;
+      <% } %>        
+          <a class="filters_menu" href="http://ltetest.saima.kg/phpbb" target="_blank">Форум</a>&nbsp;|&nbsp;
+          <a class="filters_menu" href="http://ltetest.saima.kg/speedtest" target="_blank">Speedtest</a>&nbsp;|&nbsp;
+          <a class="filters_menu" href="/logout" >Выход</a>
+      </span>                              
+     </div>
+     <div id="map_canvas"></div>
+     <ul id="myMenu" class="contextMenu disabled" style="top: 256px; left: 107px;"></ul>
+     <div id="dialog" class="disabled"></div>
+		 <div id="rulerDisplay" class="disabled"></div>
+		 <div id="filter" class=""></div>
+		 	 
+      <!-- Templates -->
+      <script type="text/template" id="menu-template">
+           <li><a id=<%%=id%>  style=background-image:url(<%%=img_path%>); ><%%=name%></a></li>
+      </script>
+
+      <!-- Templates -->
+      <script type="text/template" id="addNewMarker-template">
+        <form id="addDataForm" class="input_form">
+         <fieldset>
+          <label for="address" >Адрес:</label>
+          <div class="inputContainer"><input type="text" name="address" class="validate[required]" maxlength=60 id="address_f" value="<%%= typeof(address) != 'undefined' ? address : '' %>"></div>
+          <div class="inline">
+          <label for="is_building">Вы в здании:</label>
+          <input type="checkbox" name="is_building" value="1" class="checkb" id="is_building_f" <%%= typeof(is_building) !='undefined' && is_building==1 ? 'checked' : "" %>>
+          </div>
+
+          <fieldset name="building_data" >
+          <label for="floor" >Этаж:</label>
+          <div class="inputContainer"><input type="text" name="floor" class="validate[required,custom[integer]]" id="floor_f"  value="<%%= typeof(floor) != 'undefined' ? floor : '' %>"></div>
+
+          <label for="windows_direction" >На какую сторону выходят окна?</label>
+          <div class="inputContainer"><input type="text" name="windows_direction" class="validate[required]" maxlength=60 id="windows_direction_f" value="<%%= typeof(windows_direction) != 'undefined' ? windows_direction : '' %>" ></div>
+
+          <label for="building_location" >Местоположение в здании:</label>
+          <div class="inputContainer"><select name="building_location" id="building_location_f">
+          <option value="0" <%%= typeof(building_location) != 'undefined' && building_location=="0" ? "selected" : "" %> ></option>
+          <option value="1" <%%= typeof(building_location) != 'undefined' && building_location=="1" ? "selected" : "" %> >У балкон</option>
+          <option value="2" <%%= typeof(building_location) != 'undefined' && building_location=="2" ? "selected" : "" %> >У окна</option>
+          <option value="3" <%%= typeof(building_location) != 'undefined' && building_location=="3" ? "selected" : "" %> >В середине комнаты</option>
+          <option value="4" <%%= typeof(building_location) != 'undefined' && building_location=="4" ? "selected" : "" %> >У дальней стены</option><div class="inputContainer">
+          </select></div>
+
+          <label for="building_type_id" >Тип здания:</label>
+          <div class="inputContainer"><select name="building_type_id"  id="building_type_id_f">
+          <option value="0" <%%= typeof(building_type_id) != 'undefined' && building_type_id=="0" ? "selected" : "" %> ></option>
+          <option value="1" <%%= typeof(building_type_id) != 'undefined' && building_type_id=="1" ? "selected" : "" %> >Панель</option>
+          <option value="2" <%%= typeof(building_type_id) != 'undefined' && building_type_id=="2" ? "selected" : "" %> >Кирпич</option>
+          <option value="3" <%%= typeof(building_type_id) != 'undefined' && building_type_id=="3" ? "selected" : "" %> >Монолит</option>
+          <option value="4" <%%= typeof(building_type_id) != 'undefined' && building_type_id=="4" ? "selected" : "" %> >Саман</option>
+          </select></div>
+          </fieldset>
+
+          <div class="inline">
+          <label for="is_signal" >Связь есть:</label>
+          <input type="checkbox" name="is_signal" value="1" class="checkb" id="is_signal_f" <%%= typeof(is_signal) != 'undefined' && is_signal==1 ? "checked" : "" %>>
+          </div>
+
+          <fieldset name="signal_data">
+          <label for="signal_quality" >Качество сигнала(субъективно):</label>
+          <div class="inputContainer">
+          <select name="signal_quality"  id="signal_quality_f">
+           <option value="5" <%%= typeof(signal_quality) != 'undefined' && signal_quality == 5 ? "selected" : "" %> >5</option>
+           <option value="4" <%%= typeof(signal_quality) != 'undefined' && signal_quality == 4 ? "selected" : "" %> >4</option>
+           <option value="3" <%%= typeof(signal_quality) != 'undefined' && signal_quality == 3 ? "selected" : "" %> >3</option>
+           <option value="2" <%%= typeof(signal_quality) != 'undefined' && signal_quality == 2 ? "selected" : "" %> >2</option>
+           <option value="1" <%%= typeof(signal_quality) != 'undefined' && signal_quality == 1 ? "selected" : "" %> >1</option>
+           <option value="0" <%%= typeof(signal_quality) != 'undefined' && signal_quality == 0 ? "selected" : "" %> >0</option>
+          </select></div>
+
+          <label for="signal_level" >Уровень сигнала(dBi):</label>
+            <div class="inputContainer"><input type="text" name="signal_level" class="input_form validate[required,custom[number]]" maxlength=20 value="<%%= typeof(signal_level) != 'undefined' ? signal_level : ""%>" id="signal_level_f"></div>
+
+            <label for="cell_id" >Cell&nbsp;ID(номер базовой станции/номер соты):</label>
+            <div class="inputContainer"><input type="text" name="cell_id" class="input_form validate[required,custom[onlyHex]]" value="<%%= typeof(cell_id) != 'undefined' ? cell_id : '' %>" id="cell_id_f"></div>
+
+            <label for="upload" >Upload(Mbit/s):</label>
+            <div class="inputContainer"><input type="text" name="upload" class="input_form validate[required,custom[number]]" maxlength=20 value="<%%= typeof(upload) != 'undefined' ? upload : '' %>" id="upload_f"></div>
+            <label for="download" >Download(Mbit/s):</label>
+            <div class="inputContainer"><input type="text" name="download" class="input_form validate[required,custom[number]]" maxlength=20 value="<%%= typeof(download) != 'undefined' ? download : ''%>" id="download_f"></div>
+
+            <label for="ping" >Ping(ms):</label>
+            <div class="inputContainer"><input type="text" name="ping" class="input_form validate[required,custom[integer]]" maxlength=20 value="<%%= typeof(ping) != 'undefined' ? ping : ''%>" id="ping_f"></div>
+
+            <label for="antenna_type_id" >Тип антенны:</label>
+            <div class="inputContainer"><select name="antenna_type_id"  id="antenna_type_id_f">
+            <option value="0" <%%= typeof(antenna_type_id) != 'undefined' && antenna_type_id== "0" ? "selected" : "" %> ></option>
+            <option value="1" <%%= typeof(antenna_type_id) != 'undefined' && antenna_type_id== "1" ? "selected" : "" %> >Встроенная</option>
+            <option value="2" <%%= typeof(antenna_type_id) != 'undefined' && antenna_type_id== "2" ? "selected" : "" %> >Внешняя</option>
+            <option value="3" <%%= typeof(antenna_type_id) != 'undefined' && antenna_type_id== "3" ? "selected" : "" %> >Другое</option>
+            </select></div>
+
+            <label for="antenna_other_value" >Наиманование:</label>
+            <div class="inputContainer"><input type="text" name="antenna_other_value" class="input_form validate[required]" maxlength=60 value="<%%= typeof(antenna_other_value) != 'undefined' ? antenna_other_value : '' %>" id="antenna_other_value_f"></div>
+            </fieldset>
+
+            <fieldset>
+							<label for="comments" >Комментарий:</label>
+								<div class="inputContainer"><textarea name="comments" maxlength=4000 id="comments_f" htmlEscape="true"><%%= typeof(comments) != 'undefined' ? comments : '' %></textarea></div>
+								
+						  <% if($right_type_id eq 1){ %>
+							 <label for="comments" >Комментарий администратора:</label>
+								 <div class="inputContainer"><textarea name="admin_comments" maxlength=4000 id="admin_comments_f" htmlEscape="true"><%%= typeof(admin_comments) != 'undefined' ? admin_comments : '' %></textarea></div>
+						  <% } %>      
+							
+            </fieldset>
+						
+            </form>
+            </script>
+
+            <!-- Templates -->
+            <script type="text/template" id="addNewBaseStation-template">
+             <form id="addBaseStationForm" class="input_form">
+             <fieldset>
+             <label for="bs_cell_id" >CellID:</label>
+               <div class="inputContainer"><input type="text" name="cell_id" class="input_form validate[required,custom[onlyHex]]" id="bs_cell_id_f" maxlength=60 value="<%%= typeof(cell_id) != 'undefined' ? cell_id : "" %>"></div>
+             <label for="bs_address" >Адрес:</label>
+              <div class="inputContainer"><input type="text" name="address" class="input_form validate[required]" id="bs_address_f" maxlength=60 value="<%%= typeof(address) != 'undefined' ? address : "" %>"></div>
+             <label for="bs_name" >Наименование:</label>
+              <div class="inputContainer"><input type="text" name="name" class="input_form validate[required]" id="bs_name_f" maxlength=60 value="<%%= typeof(name) != 'undefined' ? name : "" %>"></div>
+             </fieldset>
+
+             <fieldset>
+             <label for="bs_type" >Тип базовой станции:</label>
+              <div class="inputContainer">
+               <select name="base_station_type_id" class="input_form validate[required]" id="bs_type_f">
+                <option value="0" <%%= typeof(base_station_type_id) != 'undefined' && base_station_type_id== "0" ? "selected" : "" %>></option>
+                <option value="1" <%%= typeof(base_station_type_id) != 'undefined' && base_station_type_id== "1" ? "selected" : "" %>>Свечка</option>
+                <option value="2" <%%= typeof(base_station_type_id) != 'undefined' && base_station_type_id== "2" ? "selected" : "" %>>Крыша</option>
+               </select>
+              </div>
+             <label for="high_level_signal_radius" >Зона уверенного приема:</label>
+              <div class="inputContainer"><input type="text" name="high_level_signal_radius" class="input_form validate[required,custom[integer]]" id="high_level_signal_radius_f" value="<%%= typeof(high_level_signal_radius) != 'undefined' ? high_level_signal_radius : "" %>"> </div>
+             <label for="medium_level_signal_radius" >Зона нормального приема:</label>
+              <div class="inputContainer"><input type="text" name="medium_level_signal_radius" class="input_form validate[required,custom[integer]]" id="medium_level_signal_radius_f" value="<%%= typeof(medium_level_signal_radius) != 'undefined' ? medium_level_signal_radius : "" %>"></div>
+             <label for="low_level_signal_radius" >Зона возможного приема:</label>
+              <div class="inputContainer"><input type="text" name="low_level_signal_radius" class="input_form validate[required,custom[integer]]" id="low_level_signal_radius_f" value="<%%= typeof(high_level_signal_radius) != 'undefined' ? low_level_signal_radius : "" %>"></div>
+             </fieldset>
+
+             <fieldset>
+             <label for="lat" >Широта:</label>
+              <div class="inputContainer"><input type="text" name="lat" class="input_form validate[custom[number]]" id="lat_f" value="<%%= typeof(lat) != 'undefined' ? lat : "" %>"></div>
+             <label for="lng" >Долгота:</label>
+              <div class="inputContainer"><input type="text" name="lng" class="input_form validate[custom[number]]" id="lng_f" value="<%%= typeof(lng) != 'undefined' ? lng : "" %>"></div>
+             </fieldset>
+             </form>
+            </script>
+
+            <script type="text/template" id="addNewSector-template">
+            <form id="addSectorForm" class="input_form">
+            <fieldset>
+            <label for='bs_id' >Cell ID:</label>
+            <div class="inputContainer">
+						<select name="bs_id" class="input_form" id="bs_id_f">
+						<% foreach my $row (@$bs) { %>               
+              <option value="<%= $row->[0] %>" <%%= typeof(bs_id) != 'undefined' && bs_id== "<%= $row->[0] %>" ? "selected" : "" %> ><%= $row->[1] %></option>
+             <% } %>                       
+						</select>
+						</div>
+            <label for='sector_id'>Sector ID:</label>
+            <div class="inputContainer"><input type="text" class="input_form validate[required,custom[onlyHex]]" name="sector_id" id="sector_id_f" value="<%%= typeof(sector_id) != 'undefined' ? sector_id : "" %>"></div>						
+            <label for='angle'>Угол:</label>
+            <div class="inputContainer"><input type="text" class="input_form validate[required,custom[integer]]" name="angle" id="angle_f" value="<%%= typeof(starting_angle) != 'undefined' ? parseInt(starting_angle/App.Config.pi_per_gradus) : "" %>"></div>
+						<label for='direction_angle'>Диаграмма направленности:</label>
+						<div class="inputContainer"><input type="text" name="direction_angle" class="input_form validate[required,custom[integer]]" id="direction_angle_f" value="<%%= typeof(starting_angle) != 'undefined' && typeof(ending_angle) != 'undefined' ? parseInt((ending_angle-starting_angle)/App.Config.pi_per_gradus) : "" %>" ></div>              
+            <label for="high_level_signal_radius" >Зона уверенного приема:</label>
+              <div class="inputContainer"><input type="text" name="high_level_signal_radius" class="input_form validate[required,custom[integer]]" id="high_level_signal_radius_f" value="<%%= typeof(high_level_signal_radius) != 'undefined' ? high_level_signal_radius : "" %>"> </div>
+             <label for="medium_level_signal_radius" >Зона нормального приема:</label>
+              <div class="inputContainer"><input type="text" name="medium_level_signal_radius" class="input_form validate[required,custom[integer]]" id="medium_level_signal_radius_f" value="<%%= typeof(medium_level_signal_radius) != 'undefined' ? medium_level_signal_radius : "" %>"></div>
+             <label for="low_level_signal_radius" >Зона возможного приема:</label>
+              <div class="inputContainer"><input type="text" name="low_level_signal_radius" class="input_form validate[required,custom[integer]]" id="low_level_signal_radius_f" value="<%%= typeof(high_level_signal_radius) != 'undefined' ? low_level_signal_radius : "" %>"></div>
+            </fieldset>            
+						<fieldset>
+             <label for="lat" >Широта:</label>
+              <div class="inputContainer"><input type="text" name="lat" class="input_form validate[custom[number]]" id="lat_f" value="<%%= typeof(lat) != 'undefined' ? lat : "" %>"></div>
+             <label for="lng" >Долгота:</label>
+              <div class="inputContainer"><input type="text" name="lng" class="input_form validate[custom[number]]" id="lng_f" value="<%%= typeof(lng) != 'undefined' ? lng : "" %>"></div>
+            </fieldset>
+        </form>
+        </script>
+
+       <!-- Templates -->
+       <script type="text/template" id="MarkerInfoWindow-template">
+            Создан: <%%= typeof(add_datetime) != 'undefined' ? add_datetime : "" %>
+            <br>Обновлен: <%%= typeof(last_update_datetime) != 'undefined' ? last_update_datetime : "" %>
+            <br>Добавил: <%%= typeof(login) != 'undefined' ? login : "" %>
+            <br>Адрес: <%%=unescape(address)%>
+            <br>Здание: <%%= typeof(is_building) != 'undefined' && is_building == 1 ? 'Да' : 'Нет'%>
+            <br>Этаж: <%%=floor%>
+            <br>Окна: <%%=unescape(windows_direction)%>
+            <%%
+              switch(building_location){
+                case "0": var building_location_str = "";
+                break;
+
+                case "1": var building_location_str = "У балкона";
+                break;
+
+                case "2": var building_location_str = "У окна";
+                break;
+
+                case "3": var building_location_str = "В середине комнаты";
+                break;
+
+                case "4": var building_location_str = "У дальней стены";
+                break;
+              }
+            %%>
+            <br>Местоположение в здании: <%%=building_location_str%>
+						
+						 <%%
+              switch(building_type_id){
+                case "0": var building_type_str = "";
+                break;
+
+                case "1": var building_type_str = "Панель";
+                break;
+
+                case "2": var building_type_str = "Кирпич";
+                break;
+
+                case "3": var building_type_str = "Монолит";
+                break;
+
+                case "4": var building_type_str = "Саман";
+                break;
+              }
+            %%>
+						
+            <br>Тип здания: <%%=building_type_str%>
+            <br>Связь есть: <%%= typeof(is_signal) != 'undefined' && is_signal == 1 ? 'Да' : 'Нет'%>
+            <br>Качество сигнала: <%%=signal_quality%>
+            <br>Уровень сигнала: <%%=signal_level%>
+            <br>Расстояние до базовой станции: <%%= typeof(distance_to_bs) != 'undefined' && distance_to_bs.length >0 ? distance_to_bs + ' км.': '<u>Базовая станция не задана или задана не правильно.</u>'%>
+            <br>Cell ID: <%%=cell_id%>
+            <br>Upload: <%%=upload%>
+            <br>Download: <%%=download%>
+            <br>Ping: <%%=ping%>
+            <%%
+              switch(antenna_type_id){
+                case "0": var antenna_type_id_str = "";
+                break;
+
+                case "1": var antenna_type_id_str = "Встроенная";
+                break;
+
+                case "2": var antenna_type_id_str = "Внешняя";
+                break;
+
+                case "3": var antenna_type_id_str = "Другое";
+                break;
+
+              }
+            %%>
+            <br>Тип антенны: <%%=antenna_type_id_str%>
+            <br>Наименование: <%%=antenna_other_value%>
+            <br>Коментарий: <%%=comments%>
+						<%  <% if($right_type_id eq 1){ %>
+						<br>Коментарий администратора: <%%=admin_comments%>
+						<% } %>
+       </script>
+				
+				<!-- Templates -->
+        <script type="text/template" id="BaseStationInfoWindow-template">
+            Cell ID: <%%=cell_id%>
+            <br>Адрес: <%%=address%>
+            <br>Наименование: <%%=name%>
+            <%%
+              switch(base_station_type_id){
+                case "0": var base_station_type_str = "";
+                break;
+
+                case "1": var base_station_type_str = "Свечка";
+                break;
+
+                case "2": var base_station_type_str = "Крыша";
+                break;
+              }
+            %%>
+            <br>Тип б.с.: <%%=base_station_type_str%>
+						<br>Зона уверенного приема: <%%=high_level_signal_radius%> м.
+						<br>Зона нормального приема: <%%=medium_level_signal_radius%> м.
+						<br>Зона возможного приема: <%%=low_level_signal_radius%> м.
+            
+        </script>
+				
+				<!-- Templates -->
+				<script type="text/template" id="SectorInfoWindow-template">
+            BS ID: <%%=cell_id%>
+            <br>Sector ID: <%%=sector_id%>					
+            <br>Тип: Сектор            
+            <br>Угол: <%%= parseInt(starting_angle/App.Config.pi_per_gradus) %>
+						<br>Диаграмма направленности: <%%= parseInt((ending_angle-starting_angle)/App.Config.pi_per_gradus) %>
+						<br>Зона уверенного приема: <%%=high_level_signal_radius%> м.
+            <br>Зона нормального приема: <%%=medium_level_signal_radius%> м.
+            <br>Зона возможного приема: <%%=low_level_signal_radius%> м.            
+        </script>
+				
+				<!-- Templates -->
+				<script type="text/template" id="ContollerMenuIcon-template">
+				  <div style="float: left; line-height: 0;" class="center" id="<%%=id%>"><div style="direction: ltr; overflow: hidden;
+							text-align: left; position: relative; color: rgb(0, 0, 0); font-family: Arial,sans-serif;
+							-moz-user-select: none; font-size: 13px; background: none repeat scroll 0% 0% rgb(255, 255, 255);
+							padding: 4px; box-shadow: 0pt 2px 4px rgba(0, 0, 0, 0.4); border: 1px solid rgb(113, 123, 135);
+							font-weight: bold;" title="<%%=title%>">
+							<span style="display: inline-block;">
+							<div style="width: 16px; height: 16px; overflow: hidden; position: relative;">
+							<img style="position: absolute; left: 0px; top: <%%=sprite_position%>; -moz-user-select: none; border: 0px none;
+							padding: 0px; margin: 0px; width: 16px; height: 192px;" src="http://maps.gstatic.com/mapfiles/drawing.png">
+						</div>
+						</span>
+					</div>
+				</script>
+				
+				<!-- Template -->
+				<script type="text/template" id="Filter-template">				 
+					<span id="reset_button">Сбросить все фильтры</span>
+					 <form name="filter_form">
+					 
+						 <fieldset id="space_filter">
+						 <span>Тип локации</span>
+						 <div class="inline">
+							<label for="is_building_filter">Здание:</label>
+							<input type="checkbox" name="is_building_filter"  <%%= typeof(is_building_filter) !='undefined' ? 'checked' : '' %> value="1">
+						 </div>
+						 
+						 <div class="inline"> 
+							<label for="is_street_filter">Улица:</label>
+							<input type="checkbox" name="is_street_filter" <%%= typeof(is_street_filter) !='undefined' ? 'checked' : '' %> value="0">
+						 </div>
+						 </fieldset>
+						 						 
+						 <fieldset id="antenna_filter">											
+						 <span>Тип антенны</span>
+						 <div class="inline">
+							<label for="is_outer_filter">Внешняя:</label>
+							<input type="checkbox" name="is_outer_filter" <%%= typeof(is_outer_filter) !='undefined' ? 'checked' : '' %> value="1">
+							</div>
+							
+							<div class="inline">
+							<label for="is_buildin_filter">Встроенная:</label>
+							<input type="checkbox" name="is_buildin_filter" <%%= typeof(is_buildin_filter) !='undefined' ? 'checked' : '' %> value="2">
+							</div>
+					 						 
+						 <div class="inline">
+							<label for="is_other_filter">Другое:</label>
+							<input type="checkbox" name="is_other_filter" <%%= typeof(is_other_filter) !='undefined' ? 'checked' : '' %> value="3">
+							</div>
+						 </fieldset>
+						 
+						 <fieldset id="bs_filter">         
+							<span>Зоны охвата</span>
+						 <div class="inline">
+							<label for="setSignalVisible">Показывать:</label>
+							<input type="checkbox" name="setSignalVisible" <%%= typeof(setSignalVisible) !='undefined' ? 'checked' : '' %>>
+						 </div> 
+							</fieldset>
+							
+							<fieldset id="quality_filter">         
+							<span>Качество связи</span>
+						 <div class="inline">          
+						   
+							<select name="signal_quality_filter" multiple="multiple">
+								<!-- проверяем если cookies с такими данными нет или в куках есть all, то ставем selected для all, -->
+								<option value="ALL" <%%= typeof(signal_quality_filter)== "undefined" || (typeof(signal_quality_filter)!= "undefined" && signal_quality_filter.indexOf("ALL")!=-1)  ? 'selected' : '' %> >Все</option>
+								<option value="5" <%%= typeof(signal_quality_filter)!= "undefined" && signal_quality_filter.indexOf("5")!=-1 ? 'selected' : '' %> >5</option>
+								<option value="4" <%%= typeof(signal_quality_filter)!= "undefined" && signal_quality_filter.indexOf("4")!=-1 ? 'selected' : '' %> >4</option>
+								<option value="3" <%%= typeof(signal_quality_filter)!= "undefined" && signal_quality_filter.indexOf("3")!=-1 ? 'selected' : '' %> >3</option>
+								<option value="2" <%%= typeof(signal_quality_filter)!= "undefined" && signal_quality_filter.indexOf("2")!=-1 ? 'selected' : '' %> >2</option>
+								<option value="1" <%%= typeof(signal_quality_filter)!= "undefined" && signal_quality_filter.indexOf("1")!=-1 ? 'selected' : '' %> >1</option>
+								<option value="0" <%%= typeof(signal_quality_filter)!= "undefined" && signal_quality_filter.indexOf("0")!=-1 ? 'selected' : '' %> >0</option>
+							</select>
+						 </div> 
+							</fieldset>
+							
+						 <fieldset id="setup_date">         
+							<span>Дата создания</span>
+						 <div class="inline">
+							<label for="date_from_filter">С:</label>         
+							<input type="text" name="date_from_filter" maxlength="10" value="<%%= typeof(date_from_filter) !='undefined' ? date_from_filter : '' %>" >
+						 </div>
+							
+						 <div class="inline">
+							<label for="date_to_filter">По:</label>         
+							<input type="text" name="date_to_filter" maxlength="10" value="<%%= typeof(date_to_filter) !='undefined' ? date_to_filter : '' %>" >
+						 </div>          
+						 </fieldset>
+																			 
+						 <fieldset id="bs_filter">
+							 <span>Номер станции</span>
+							 <select multiple="multiple" size="10" name="cell_id_filter">
+									<!-- проверяем если cookies с такими данными нет или в куках есть all, то ставем selected для all, -->
+									<option value="ALL" <%%= typeof(cell_id_filter)== "undefined" || (typeof(cell_id_filter)!= "undefined" && cell_id_filter.indexOf("ALL")!=-1) ? 'selected' : '' %> >Все</option>
+									<option value="UNDEFINED">Не определено</option>              
+								 <% foreach my $row (@$cell_id) { %>
+									 
+									<option value="<%= $row->[0] %>" <%%= typeof(cell_id_filter)!= "undefined" && cell_id_filter.indexOf("<%= $row->[0] %>")!=-1 ? 'selected' : '' %> ><%= $row->[1] %> - <%= $row->[0] %></option>
+								 <% } %>                       
+							 </select>
+							</fieldset>
+							
+							<fieldset id="users_filter">
+							 <span>Владельцы</span>
+							 <select multiple="multiple" size="10" name="users_filter">
+								 <!-- проверяем если cookies с такими данными нет или в куках есть all, то ставем selected для all, -->
+								 <option value="ALL" <%%= typeof(users_filter)== "undefined" || (typeof(users_filter)!= "undefined" && users_filter.indexOf("ALL")!=-1) ? 'selected' : '' %> >Все</option>                            
+								 <% foreach my $user (@$users) { %>               
+									<option value="<%= $user->[2] %>" <%%= typeof(users_filter)!= "undefined" && users_filter.indexOf("<%= $user->[2] %>")!=-1 ? 'selected' : '' %> ><%= $user->[2] %></option>
+								 <% } %>                       
+							 </select>
+							</fieldset>        
+					 </form>			 
+				</script>
+				
+     </body>
+  </html>
+
+
